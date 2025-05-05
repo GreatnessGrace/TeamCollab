@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { comparePasswords } from "../utils/password";
-import { signAccessToken, signRefreshToken } from "../utils/jwt";
+import { signAccessToken, signRefreshToken, verifyToken } from "../utils/jwt";
 
 
 export const register = async (req: Request, res: Response) => {
@@ -42,3 +42,23 @@ export const login = async (req:Request, res:Response) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 }
+
+export const refreshAccessToken = async (req: Request, res: Response) => {
+    try {
+      const token = req.cookies.refershToken;
+  console.log(token)
+      if (!token) {
+        return res.status(401).json({ message: 'Refresh token missing' });
+      }
+  
+      const decoded = verifyToken(token, 'refresh') as { userId: string; role: string };
+  
+      const accessToken = signAccessToken({ userId: decoded.userId, role: decoded.role });
+  
+      return res.json({ accessToken });
+  
+    } catch (err) {
+      console.error('Refresh token error:', err);
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
+  };
