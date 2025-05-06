@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
@@ -17,9 +17,10 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["user", "admin"],
+        enum: ["user", "admin", "manager"],
         default: "user",
     },
+    teams: [{ type: Types.ObjectId, ref: 'Team' }],
 },
 {
     timestamps: true,
