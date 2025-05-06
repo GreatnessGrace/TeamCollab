@@ -4,7 +4,8 @@ import { verifyToken } from '../utils/jwt';
 export interface AuthenticatedRequest extends Request {
   user?: {
     userId: string;
-    role: string;
+    email: string;
+    role: 'admin' | 'manager' | 'user';
   };
 }
 
@@ -13,6 +14,7 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
   if (!token) return res.status(401).json({ message: 'No token' });
 
   try {
+    console.log(token)
     const payload = verifyToken(token, 'access') as any;
     req.user = payload;  // attach user info to request
     next();
