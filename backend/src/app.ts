@@ -4,6 +4,7 @@ import healthRoutes from './routes/health';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/users.routes';
 import adminRoutes from './routes/admin.routes';
+import teamRoutes from './routes/team.routes';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -17,5 +18,6 @@ app.use('/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/teams', teamRoutes);
 
 export default app;
