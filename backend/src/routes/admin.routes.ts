@@ -4,6 +4,6 @@ import { createAdmin } from '../controllers/admin.controller';
 
 const router = Router();
 
-router.post('/admin/create', authMiddleware, checkRole('admin'), createAdmin);
+router.post('/create', authMiddleware, checkRole('admin'), createAdmin);
 
 export default router;
