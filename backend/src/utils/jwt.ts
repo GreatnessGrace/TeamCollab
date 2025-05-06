@@ -11,3 +11,12 @@ export const signAccessToken = (payload: object) => jwt.sign(payload, JWT_SECRET
 export const signRefreshToken = (payload: object) => jwt.sign(payload, REFERSH_SECRET, { expiresIn: '7d' });
 
 export const verifyToken = (token: string, type: 'access' | 'refresh') => jwt.verify(token, type === 'access' ? JWT_SECRET : REFERSH_SECRET);
+
+export const generateInviteToken = (email: string, teamId: string): string => {
+    return jwt.sign({ email, teamId }, process.env.INVITE_SECRET!, { expiresIn: '2d' });
+  }
+  
+export const verifyInviteToken = (token: string) => {
+    return jwt.verify(token, process.env.INVITE_SECRET!);
+  }
+  
