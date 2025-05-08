@@ -14,7 +14,6 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
   if (!token) return res.status(401).json({ message: 'No token' });
 
   try {
-    console.log(token)
     const payload = verifyToken(token, 'access') as any;
     req.user = payload;  // attach user info to request
     next();

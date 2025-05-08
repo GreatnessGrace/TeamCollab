@@ -46,7 +46,6 @@ export const login = async (req:Request, res:Response) => {
 export const refreshAccessToken = async (req: Request, res: Response) => {
     try {
       const token = req.cookies.refershToken;
-  console.log(token)
       if (!token) {
         return res.status(401).json({ message: 'Refresh token missing' });
       }
