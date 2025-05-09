@@ -87,3 +87,19 @@ export const inviteUserToTeam = async (req: Request, res: Response) => {
       res.status(400).json({ message: 'Invalid or expired token', error });
     }
   };
+
+  export const listTeamMembers = async (req: Request, res: Response) => {
+    try {
+      const { teamId } = req.params;
+  
+      const team = await Team.findById(teamId).populate('members.user', 'name email');
+      if (!team) return res.status(404).json({ message: 'Team not found' });
+  
+      res.status(200).json({
+        teamId: team._id,
+        members: team.members
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
+    }
+  };
