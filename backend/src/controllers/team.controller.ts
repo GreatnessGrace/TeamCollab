@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { Team } from "../models/team.model";
-import { generateInviteToken } from "../utils/jwt";
+import { generateInviteToken, verifyInviteToken } from "../utils/jwt";
 import { sendEmail } from "../utils/sendEmail";
+import { User } from "../models/user.model";
 
 
 export const create = async (req: AuthenticatedRequest, res: Response) => {
@@ -54,5 +55,35 @@ export const inviteUserToTeam = async (req: Request, res: Response) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error', error });
+    }
+  };
+
+  export const joinTeam = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.body;
+      const decoded = verifyInviteToken(token) as { email: string; teamId: string };
+  
+      const team = await Team.findById(decoded.teamId);
+      if (!team) return res.status(404).json({ message: 'Team not found' });
+  
+      const invite = team.inviteTokens.find(i => i.token === token);
+      if (!invite) return res.status(403).json({ message: 'Invalid invite token' });
+  console.log(decoded.email)
+      const user = await User.findOne({ email: decoded.email });
+      if (!user) return res.status(404).json({ message: 'User not registered yet' });
+  
+      // Add to team if not already a member
+      const alreadyMember = team.members.some(m => m?.user?.toString() === user._id.toString());
+      if (!alreadyMember) {
+        team.members.push({ user: user._id, role: 'user' });
+        await team.save();
+  
+        user.teams.push(team._id);
+        await user.save();
+      }
+  
+      res.status(200).json({ message: 'Joined team successfully', teamId: team._id });
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid or expired token', error });
     }
   };
