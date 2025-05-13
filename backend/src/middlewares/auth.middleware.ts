@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import { verifyToken } from "../utils/jwt";
 
 export interface AuthenticatedRequest extends Request {
@@ -28,10 +28,11 @@ export const authMiddleware = (
   }
 };
 
-export const checkRole = (role: string): any => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const checkRole = (role: string): RequestHandler => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     if (req.user?.role !== role) {
-      return res.status(403).json({ message: "Forbidden" });
+      res.status(403).json({ message: 'Forbidden' });
+      return;
     }
     next();
   };
